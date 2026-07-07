@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: flota
+      POSTGRES_PASSWORD: flota_pass_cambiar
+      POSTGRES_DB: flota
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://flota:flota_pass_cambiar@db:5432/flota
+      SECRET_KEY: cambiar-esta-clave-en-produccion
+      ADMIN_PASSWORD: cambiar-esta-password
+      GPS_PROVIDER: mock
+      GAP_BASE_URL: ""
+      GAP_API_KEY: ""
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  db_data:
