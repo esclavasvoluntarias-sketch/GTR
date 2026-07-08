@@ -1,0 +1,326 @@
+/* ============================================================
+   Dirección visual: consola física de radio-despacho de auxilio
+   vial. Referencias reales: balizas ámbar de grúas y auxilios,
+   franjas de peligro amarillo/negro, paneles de instrumentos,
+   displays LED de 7 segmentos, papel de manifiesto de despacho.
+   Nada de gradientes brillantes ni acentos cian/violeta genéricos.
+   ============================================================ */
+:root {
+  --bg: #16151a;            /* asfalto de noche */
+  --bg-deep: #0f0e12;
+  --surface: #211e23;       /* chapa de panel */
+  --surface-alt: #2a262c;
+  --border: #3a343a;
+  --border-soft: #2c2830;
+
+  --text: #efe8db;          /* blanco papel, cálido */
+  --text-dim: #a39c8e;
+  --text-mute: #6f6960;
+
+  --amber: #ffb000;         /* LED ámbar — acento primario */
+  --amber-dim: #b37c00;
+  --orange: #ff6a13;        /* baliza / grúa */
+  --red: #d8402a;           /* rojo ladrillo de peligro, no neón */
+  --green: #5ec98b;         /* luz de estado "en ruta" */
+  --stripe-yellow: #f2c14e; /* franja de peligro */
+
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-mono: 'Share Tech Mono', 'Consolas', monospace;
+  --font-body: 'Barlow', 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0; padding: 0; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  background-image: repeating-linear-gradient(
+    0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px
+  );
+}
+
+a { color: var(--amber); text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+::selection { background: rgba(255,176,0,0.3); }
+
+.app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ---------- Franja de peligro: firma visual del sistema ---------- */
+.hazard-stripe {
+  height: 4px;
+  background: repeating-linear-gradient(
+    135deg,
+    var(--stripe-yellow) 0px, var(--stripe-yellow) 10px,
+    #1a1810 10px, #1a1810 20px
+  );
+  flex-shrink: 0;
+}
+
+/* ---------- Consola superior: faceplate de radio de despacho ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand-block { display: flex; align-items: center; gap: 10px; }
+
+.led {
+  width: 9px; height: 9px;
+  background: var(--green);
+  border: 1px solid rgba(0,0,0,0.4);
+  flex-shrink: 0;
+  animation: blink 2.4s steps(1) infinite;
+}
+
+@keyframes blink {
+  0%, 85% { opacity: 1; }
+  90%, 100% { opacity: 0.35; }
+}
+
+.brand {
+  color: var(--amber);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+}
+
+.brand-sub {
+  color: var(--text-mute);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+/* ---------- Nav: selector de canal físico ---------- */
+.nav {
+  display: flex;
+  gap: 6px;
+  padding: 10px 24px;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border-soft);
+  overflow-x: auto;
+}
+
+.nav a {
+  padding: 8px 14px;
+  color: var(--text-dim);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
+}
+
+.nav a.active {
+  color: var(--bg);
+  background: var(--amber);
+  border-color: var(--amber);
+  border-bottom-color: var(--amber-dim);
+}
+
+.content {
+  flex: 1;
+  padding: 24px;
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.page-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+
+/* ---------- KPI cards: placas de instrumento ---------- */
+.grid-kpi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--card-accent, var(--border));
+  padding: 16px 18px;
+}
+
+.card h3 {
+  margin: 0 0 8px 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+/* Lectura tipo display digital de despacho */
+.kpi-value {
+  font-family: var(--font-mono);
+  font-size: 2.4rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.kpi-sub {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+/* ---------- Tablas: hoja de manifiesto ---------- */
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  font-family: var(--font-mono);
+}
+
+th {
+  color: var(--text-mute);
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:nth-child(even) { background: rgba(255,255,255,0.015); }
+tbody tr:hover { background: rgba(255,176,0,0.05); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- Badges de severidad ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+  border: 1px solid;
+  text-transform: uppercase;
+}
+
+.badge-critica { background: rgba(216,64,42,0.15); color: #ff8264; border-color: var(--red); }
+.badge-advertencia { background: rgba(255,176,0,0.15); color: var(--amber); border-color: var(--amber-dim); }
+.badge-ok { background: rgba(94,201,139,0.15); color: var(--green); border-color: var(--green); }
+
+.dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-right: 7px;
+}
+.dot-on { background: var(--green); }
+.dot-off { background: var(--text-mute); }
+
+/* ---------- Controles ---------- */
+input, select {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  border-radius: 0;
+}
+
+input:focus, select:focus, button:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 1px;
+}
+
+.btn {
+  background: var(--amber);
+  color: #1a1204;
+  border: none;
+  padding: 10px 18px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.btn:hover { background: #ffc433; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 9px 16px;
+  font-size: 0.8rem;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.btn-outline:hover { border-color: var(--text-dim); color: var(--text); }
+
+.base-chip {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+@media (max-width: 640px) {
+  .content { padding: 14px; }
+  .topbar { padding: 12px 16px; }
+  .nav { padding: 8px 16px; }
+  .grid-kpi { grid-template-columns: repeat(2, 1fr); }
+  th, td { padding: 9px 10px; font-size: 0.76rem; }
+  .kpi-value { font-size: 1.9rem; }
+  .page-title { font-size: 1.5rem; }
+}
